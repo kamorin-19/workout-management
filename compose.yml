@@ -14,9 +14,22 @@ services:
       - NODE_ENV=development
       - API_URL=http://localhost:4000/api
     command: sh -c "npm install && npm run dev"
-    #command: sh -c "tail -f /dev/null"
     tty: true
     stdin_open: true
+
+  backend:
+    image: php:8.3-fpm-alpine
+    container_name: workout-management-backend
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    ports:
+      - "4000:80"
+    environment:
+      - PHP_MEMORY_LIMIT=256M
+      - LAMBDA_TASK_ROOT=/var/www/html
+    depends_on:
+      - frontend
 
 volumes:
   node_modules:
