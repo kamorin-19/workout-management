@@ -28,8 +28,33 @@ services:
     environment:
       - PHP_MEMORY_LIMIT=256M
       - LAMBDA_TASK_ROOT=/var/www/html
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=workout_management
+      - DB_USERNAME=workout_user
+      - DB_PASSWORD=workout_password
     depends_on:
       - frontend
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: workout-management-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=workout_management
+      - MYSQL_USER=workout_user
+      - MYSQL_PASSWORD=workout_password
+      - MYSQL_ROOT_PASSWORD=root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE を追加してパフォーマンス向上
 
 volumes:
   node_modules:
+  mysql_data:
